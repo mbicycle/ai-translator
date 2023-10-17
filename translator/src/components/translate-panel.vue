@@ -76,7 +76,7 @@ export default {
         this.translation = '';
       }
       else {
-        this.translation = translationService.translate(text, source.code, target.code); 
+        this.translation = await translationService.translate(text, source.code, target.code); 
       }
     }
   }
