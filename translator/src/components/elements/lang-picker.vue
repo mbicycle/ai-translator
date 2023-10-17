@@ -1,5 +1,5 @@
 ﻿<template>
-  <div class="btn-group w-50">
+  <div class="btn-group w-25">
     <button type="button"
             class="btn btn-success dropdown-toggle"
             data-bs-toggle="dropdown"

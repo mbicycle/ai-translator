@@ -7,15 +7,15 @@
 
     <!-- BODY -->
     <div class="flex-grow-1 d-flex justify-content-center">
-      <div class="w-25 m-3">
+      <div class="w-50 m-3">
         <lang-picker
             class="mb-2"
             :langs="langs"
             :current="sourceLang"
             @lang-changed="changeSourceLang"/>
-        <source-input @input="translate"/>
+        <source-input @input="sourceTextChanged"/>
       </div>
-      <div class="w-25 m-3">
+      <div class="w-50 m-3">
         <lang-picker
             class="mb-2"
             :langs="langs"
@@ -31,13 +31,12 @@
 </template>
 
 <script>
+import { inject } from 'vue';
 import SourceInput from "@/components/translation/source-input.vue";
 import TargetInput from "@/components/translation/target-input.vue";
 import LangPicker from "@/components/elements/lang-picker.vue";
 import AppNavigation from "@/components/elements/app-navigation.vue";
-import TranslationService from "@/services/TranslationService.ts";
-
-const translationService = new TranslationService();
+import { TRANSLATION_SERVICE_KEY } from '@/injectionSymbols';
 
 export default {
   name: 'translate-panel',
@@ -47,36 +46,48 @@ export default {
     SourceInput,
     LangPicker,
   },
+  setup() {
+    const translationService = inject(TRANSLATION_SERVICE_KEY);
+
+    return { translationService };
+  },
   data() {
     return {
       langs: [
         { name: "English", code: "en" },
-        { name: "Deutsche", code: "de" },
-        { name: "Polski", code: "pl" },
-        { name: "Українська", code: "uk" },
+        { name: "Русский", code: "ru" },
         { name: "Беларуская", code: "be" },
-        { name: "Русский", code: "ru" }
+        { name: "Українська", code: "uk" },
+        { name: "Polski", code: "pl" },
+        { name: "Deutsche", code: "de" },
       ],
       sourceLang: 0,
       targetLang: 1,
+      originText: '',
       translation: ''
     }
   },
   methods: {
     changeSourceLang: function(index) {
       this.sourceLang = index;
+      this.translate();
     },
     changeTargetLang: function(index) {
       this.targetLang = index;
+      this.translate();
     },
-    translate: async function (text) {
+    sourceTextChanged: function(text) {
+      this.originText = text;
+      this.translate();
+    },
+    translate: async function() {
       let source = this.langs[this.sourceLang];
       let target = this.langs[this.targetLang];
-      if (text === '') {
+      if (this.originText === '') {
         this.translation = '';
       }
       else {
-        this.translation = await translationService.translate(text, source.code, target.code); 
+        this.translation = await this.translationService.translate(this.originText, source.code, target.code); 
       }
     }
   }

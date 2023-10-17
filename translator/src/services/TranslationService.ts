@@ -7,7 +7,7 @@ export default class TranslationService {
         this._openai = openai;
     }
     
-    public async translate(text, sourceLang, targetLang): Promise<string> {        
+    public async translate(text: string, sourceLang: string, targetLang: string): Promise<string | null> {        
         const completion = await this._openai.chat.completions.create({
             model: "gpt-3.5-turbo",
             messages: [
